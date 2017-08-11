@@ -1,6 +1,6 @@
-# Quasar App
+# carder-frontend
 
-> A Quasar project
+> The frontend for Carder.
 
 ## Build Setup
 

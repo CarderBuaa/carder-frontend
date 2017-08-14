@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { Toast } from 'quasar'
+import { Toast, LocalStorage } from 'quasar'
 
 export default {
     data() {
@@ -50,10 +50,19 @@ export default {
                 })
                 return
             }
-            this.$http.get('/').then(resp => {
+            this.$http.post('accesstoken', {
+                params: {
+                    username: this.username,
+                    password: this.password
+                }
+            }).then(resp => {
                 switch(resp.status) {
                 case 200:
                     break
+                default:
+                    Toast.create.negative({
+                        html: '嗯?'
+                    }) 
                 }
             })
         },
@@ -65,6 +74,11 @@ export default {
                 return
             }
             ;
+        }
+    },
+    created: function() {
+        if(LocalStorage.has('token')){
+            router.push('/card')
         }
     }
 }

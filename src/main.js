@@ -14,6 +14,8 @@ import router from './router'
 Vue.use(Quasar) // Install Quasar Framework
 Vue.use(VueResource)
 
+Vue.http.options.root = 'http://example.com/'
+
 Quasar.start(() => {
     /* eslint-disable no-new */
     new Vue({

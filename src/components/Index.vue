@@ -16,10 +16,10 @@
                 </q-toolbar-title>
             </div> -->
             <div class="list no-border platform-delimiter">
-                <q-drawer-link icon="mail" :to="{path: '/card', exact: true}">
+                <q-drawer-link icon="contacts" :to="{path: '/card', exact: true}">
                     名片
                 </q-drawer-link>
-                <q-drawer-link icon="mail" :to="{path: '/profile', exact: true}">
+                <q-drawer-link icon="person" :to="{path: '/profile', exact: true}">
                     个人信息
                 </q-drawer-link>
             </div>

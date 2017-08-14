@@ -44,26 +44,27 @@ export default {
     },
     methods: {
         login: function() {
-            if(!this.username || !this.password){
+            if(!this.username || !this.password) {
                 Toast.create.negative({
-                    html: "用户名或密码不能为空!"
+                    html: '用户名或密码不能为空!'
                 })
                 return
             }
             this.$http.get('/').then(resp => {
                 switch(resp.status) {
-                    case 200:
-                        break
+                case 200:
+                    break
                 }
             })
         },
         register: function() {
-            if(!this.username || !this.password){
+            if(!this.username || !this.password) {
                 Toast.create.negative({
-                    html: "用户名或密码不能为空!"
+                    html: '用户名或密码不能为空!'
                 })
                 return
             }
+            ;
         }
     }
 }

@@ -47,7 +47,7 @@
                                 <input type="number" class="full-width" v-model="formdata.phone[index]">
                             </div>
                             <div class="width-1of5 ">
-                                <button v-if="index === 0" class="clear primary" @click.prevent="addPhone()">增加</button>
+                                <button v-if="index === 0" class="primary" @click.prevent="addPhone()">增加</button>
                                 <button v-if="index !== 0" class="clear negative" @click.prevent="delPhone(index)">删除</button>
                             </div>
                         </div>

@@ -50,18 +50,23 @@ export default {
                 })
                 return
             }
-            this.$http.post('accesstoken', {
-                params: {
-                    username: this.username,
-                    password: this.password
-                }
+            this.$http.post('user/accesstoken', {
+                username: this.username,
+                password: this.password
             }).then(resp => {
+                LocalStorage.set('token', resp.data.token)
+                LocalStorage.set('username', this.username)
+                this.$router.push('/card')
+            }, resp => {
                 switch(resp.status) {
-                case 200:
+                case 400:
+                    Toast.create.negative({
+                        html: resp.data.message
+                    })
                     break
                 default:
                     Toast.create.negative({
-                        html: '嗯?'
+                        html: '未知错误'
                     }) 
                 }
             })
@@ -73,7 +78,26 @@ export default {
                 })
                 return
             }
-            ;
+            this.$http.post('user', {
+                username: this.username,
+                password: this.password
+            }).then(resp => {
+                Toast.create.positive({
+                    html: '注册成功! 请登录'
+                })
+            }, resp => {
+                switch(resp.status) {
+                case 400:
+                    Toast.create.negative({
+                        html: resp.data.message
+                    })
+                    break
+                default:
+                    Toast.create.negative({
+                        html: '未知错误'
+                    }) 
+                }
+            })
         }
     },
     created: function() {

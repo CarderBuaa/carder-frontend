@@ -74,7 +74,8 @@ export default {
                 email: '',
                 address: '',
                 phone: [undefined]
-            }
+            },
+            loading: true
         }
     },
     methods: {

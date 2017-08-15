@@ -102,7 +102,7 @@ export default {
     },
     created: function() {
         if(LocalStorage.has('token')){
-            router.push('/card')
+            this.$router.push('/card')
         }
     }
 }

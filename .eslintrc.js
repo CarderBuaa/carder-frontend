@@ -28,7 +28,7 @@ module.exports = {
         'space-before-function-paren': ['warn', 'never'],
         // allow debugger during development
         'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-        'brace-style': [2, 'stroustrup', { 'allowSingleLine': true }],
+        'brace-style': ['warn', 'stroustrup', { 'allowSingleLine': true }],
         'keyword-spacing': ['warn', { "after": false }]
     }
 }

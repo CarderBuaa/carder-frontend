@@ -3822,7 +3822,7 @@ qs@6.4.0, qs@~6.4.0:
   version "6.4.0"
   resolved "https://registry.npmjs.org/qs/-/qs-6.4.0.tgz#13e26d28ad6b0ffaa91312cd3bf708ed351e7233"
 
-quasar-framework@^0.13.4:
+quasar-framework@^0.13.10:
   version "0.13.10"
   resolved "https://registry.npmjs.org/quasar-framework/-/quasar-framework-0.13.10.tgz#fd5e813cc9c75220c92f587b19525423ff7aa6f8"
 
@@ -4779,7 +4779,7 @@ vue-template-es2015-compiler@^1.2.2:
   version "1.5.3"
   resolved "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.5.3.tgz#22787de4e37ebd9339b74223bc467d1adee30545"
 
-vue@^2.3.0:
+vue@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npmjs.org/vue/-/vue-2.4.2.tgz#a9855261f191c978cc0dc1150531b8d08149b58c"
 

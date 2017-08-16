@@ -7,6 +7,9 @@
             <q-toolbar-title :padding="0">
                 Carder
             </q-toolbar-title>
+            <button @click="logout()">
+                <i>person</i>
+            </button>
         </div>
 
         <q-drawer ref="leftDrawer">
@@ -36,16 +39,24 @@
 </template>
 
 <script>
+import { LocalStorage } from 'quasar'
+
 export default {
     data() {
         return {
         }
     },
-    computed: {
-
-    },
     methods: {
-
+        logout: function() {
+            LocalStorage.remove('token')
+            LocalStorage.remove('username')
+            this.$router.push('/login')
+        }
+    },
+    created: function() {
+        if(!LocalStorage.has('token') || !LocalStorage.has('username')) {
+            this.$route.push('/login')
+        }
     }
 }
 </script>

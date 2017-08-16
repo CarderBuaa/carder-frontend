@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { Toast, LocalStorage } from 'quasar'
+import { Toast, LocalStorage, Loading } from 'quasar'
 
 export default {
     data() {
@@ -53,6 +53,8 @@ export default {
             this.$http.post('user/accesstoken', {
                 username: this.username,
                 password: this.password
+            }, {
+                emulateJSON: true
             }).then(resp => {
                 LocalStorage.set('token', resp.data.token)
                 LocalStorage.set('username', this.username)
@@ -67,7 +69,7 @@ export default {
                 default:
                     Toast.create.negative({
                         html: '未知错误'
-                    }) 
+                    })
                 }
             })
         },
@@ -81,6 +83,8 @@ export default {
             this.$http.post('user', {
                 username: this.username,
                 password: this.password
+            }, {
+                emulateJSON: true
             }).then(resp => {
                 Toast.create.positive({
                     html: '注册成功! 请登录'
@@ -95,13 +99,14 @@ export default {
                 default:
                     Toast.create.negative({
                         html: '未知错误'
-                    }) 
+                    })
                 }
             })
         }
     },
     created: function() {
-        if(LocalStorage.has('token')){
+        if(Loading.isActive()) Loading.hide()
+        if(LocalStorage.has('token') && LocalStorage.has('username')) {
             this.$router.push('/card')
         }
     }

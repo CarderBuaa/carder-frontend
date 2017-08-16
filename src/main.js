@@ -15,7 +15,7 @@ Vue.use(Quasar) // Install Quasar Framework
 Vue.use(VueResource)
 
 Vue.http.options.root = 'http://123.207.142.45:8080/ssm/'
-Vue.http.options.emulateJSON = true
+// Vue.http.options.emulateJSON = true
 
 Quasar.start(() => {
     /* eslint-disable no-new */

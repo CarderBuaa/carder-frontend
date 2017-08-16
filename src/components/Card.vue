@@ -2,24 +2,24 @@
         <div class="layout-view">
             <div class="profile-page layout-padding">
                 <h1>名片信息</h1>
-                <div class="card">
-                    <img src="">
+                <div class="card" v-for="card in cards" :key="card.id">
+                    <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
                     <div class="card-content">
-                        <button class="primary" @click="$refs.basicModal.open()">修改</button>
-                        <button class="clear negative" @click="$refs.basicModal.open()">删除</button>
+                        <!-- <button class="primary" @click="$refs.basicModal.open()">修改</button> -->
+                        <button class="clear negative" @click="delCard(card.id)">删除</button>
                     </div>
                 </div>
             </div>
-            <q-modal ref="basicModal" class="minimized">
-                <div class="editModal">
-                    <h4>修改</h4>
+            <q-modal ref="basicModal">
+                <div class="cardModal">
+                    <h4>增加名片</h4>
                     <form action="">
                         <div class="row items-center gutter">
                             <div class="width-1of5 right-aligned">
                                 <label class="">姓名</label>
                             </div>
                             <div class="auto">
-                                <input type="text" class="full-width" v-model="formdata.name">
+                                <input type="text" class="full-width" v-model="formdata.name" readonly>
                             </div>
                         </div>
                         <div class="row items-center gutter">
@@ -27,7 +27,7 @@
                                 <label class="">职位</label>
                             </div>
                             <div class="auto">
-                                <input type="text" class="full-width" v-model="formdata.occupation">
+                                <q-select class="full-width" type="list" v-model="formdata.occupation" :options="makeOptions(profile.occupation)"></q-select>
                             </div>
                         </div>
                         <div class="row items-center gutter">
@@ -35,7 +35,7 @@
                                 <label class="">电子邮箱</label>
                             </div>
                             <div class="auto">
-                                <input type="text" class="full-width" v-model="formdata.email">
+                                <q-select class="full-width" type="list" v-model="formdata.email" :options="makeOptions(profile.email)"></q-select>
                             </div>
                         </div>
                         <div class="row items-center gutter">
@@ -43,12 +43,20 @@
                                 <label class="">地址</label>
                             </div>
                             <div class="auto">
-                                <input type="text" class="full-width" v-model="formdata.address">
+                                <q-select class="full-width" type="list" v-model="formdata.address" :options="makeOptions(profile.address)"></q-select>
+                            </div>
+                        </div>
+                        <div class="row items-center gutter">
+                            <div class="width-1of5 right-aligned">
+                                <label class="">电话</label>
+                            </div>
+                            <div class="auto">
+                                <q-select class="full-width" type="list" v-model="formdata.phone" :options="makeOptions(profile.phone)"></q-select>
                             </div>
                         </div>
                         <div class="row gutter button-container">
                             <div class="width-1of2">
-                                <button class="primary full-width">修改</button>
+                                <button class="primary full-width" @click.prevent="addCardSubmit()">提交</button>
                             </div>
                             <div class="auto">
                                 <button class="clear negative full-width" @click.prevent="$refs.basicModal.close()">取消</button>
@@ -64,6 +72,8 @@
 </template>
 
 <script>
+import { Loading, LocalStorage, Toast } from 'quasar'
+
 export default {
     data() {
         return {
@@ -72,20 +82,112 @@ export default {
                 occupation: '',
                 email: '',
                 address: '',
-                phone: [undefined]
-            }
+                phone: ''
+            },
+            profile: {
+                name: '',
+                occupation: [],
+                email: [],
+                address: [],
+                phone: []
+            },
+            cards: [],
+            username: ''
         }
     },
     methods: {
         addCard: function() {
+            this.formdata = {
+                name: this.profile.name,
+                occupation: '',
+                email: '',
+                address: '',
+                phone: ''
+            }
             this.$refs.basicModal.open()
+        },
+        delCard: function(id) {
+            if(confirm('确认要删除吗?')) {
+                this.$http.delete('card/' + id, {
+                    headers: {
+                        'Access-Token': LocalStorage.get.item('token')
+                    }
+                }).then(resp => {
+                    window.location.reload()
+                }, resp => {
+                    Toast.create.negative({
+                        html: '未知错误'
+                    })
+                })
+            }
+        },
+        makeOptions: function(arr) {
+            let options = []
+            for(let i = 0; i < arr.length; i++) {
+                options.push({
+                    label: arr[i],
+                    value: arr[i]
+                })
+            }
+            return options
+        },
+        addCardSubmit: function() {
+            let formdata = new FormData()
+            for(let key in this.formdata) {
+                formdata.append(key, this.formdata[key])
+            }
+            this.$http.post('card', formdata, {
+                headers: {
+                    'Access-Token': LocalStorage.get.item('token')
+                }
+            }).then(resp => {
+                window.location.reload()
+            }, resp => {
+                Toast.create.negative({
+                    html: '未知错误'
+                })
+            })
         }
+    },
+    created: function() {
+        Loading.show()
+        if(!LocalStorage.has('token') || !LocalStorage.has('username')) {
+            this.$router.push('/login')
+        }
+        this.username = LocalStorage.get.item('username')
+        this.$http.get('user/' + LocalStorage.get.item('username'), {
+            headers: {
+                'Access-Token': LocalStorage.get.item('token')
+            }
+        }).then(resp => {
+            this.profile.name = resp.data.name
+            this.profile.occupation = resp.data.occupation
+            this.profile.address = resp.data.address
+            this.profile.email = resp.data.email
+            this.profile.phone = resp.data.phone
+            this.cards = resp.data.cards
+            Loading.hide()
+        }, resp => {
+            if(resp.status === 401) {
+                LocalStorage.remove('token')
+                LocalStorage.remove('username')
+                this.$router.push('/login')
+            }
+            else {
+                Toast.create.negative({
+                    html: '未知错误'
+                })
+                Loading.show({
+                    message: '未知错误, 请刷新页面重试'
+                })
+            }
+        })
     }
 }
 </script>
 
 <style lang="stylus">
-.editModal
+.cardModal
     padding 30px
 
 .fab-card

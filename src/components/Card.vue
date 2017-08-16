@@ -54,6 +54,14 @@
                                 <q-select class="full-width" type="list" v-model="formdata.phone" :options="makeOptions(profile.phone)"></q-select>
                             </div>
                         </div>
+                        <div class="row items-center gutter">
+                            <div class="width-1of5 right-aligned">
+                                <label class="">背景</label>
+                            </div>
+                            <div class="auto">
+                                <input class="full-width" type="file" accept="image/png,image/gif,image/jpeg" @change="getFile($event)"></input>
+                            </div>
+                        </div>
                         <div class="row gutter button-container">
                             <div class="width-1of2">
                                 <button class="primary full-width" @click.prevent="addCardSubmit()">提交</button>
@@ -82,7 +90,8 @@ export default {
                 occupation: '',
                 email: '',
                 address: '',
-                phone: ''
+                phone: '',
+                image: ''
             },
             profile: {
                 name: '',
@@ -102,9 +111,13 @@ export default {
                 occupation: '',
                 email: '',
                 address: '',
-                phone: ''
+                phone: '',
+                image: ''
             }
             this.$refs.basicModal.open()
+        },
+        getFile: function(event) {
+            this.formdata.image = event.target.files[0]
         },
         delCard: function(id) {
             if(confirm('确认要删除吗?')) {

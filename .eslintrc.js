@@ -29,6 +29,8 @@ module.exports = {
         // allow debugger during development
         'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
         'brace-style': ['warn', 'stroustrup', { 'allowSingleLine': true }],
-        'keyword-spacing': ['warn', { "after": false }]
+        'keyword-spacing': 'off',
+        'no-useless-return': 'off',
+        'no-undef': 'off'
     }
 }

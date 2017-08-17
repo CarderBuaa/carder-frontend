@@ -8,7 +8,7 @@
                 Carder
             </q-toolbar-title>
             <button @click="logout()">
-                <i>person</i>
+                <i>exit_to_app</i>
             </button>
         </div>
 
@@ -48,15 +48,26 @@ export default {
     },
     methods: {
         logout: function() {
-            LocalStorage.remove('token')
-            LocalStorage.remove('username')
-            this.$router.push('/login')
+            if(confirm('确定要登出吗?')) {
+                LocalStorage.remove('token')
+                LocalStorage.remove('username')
+                this.$router.push('/login')
+            }
         }
     },
     created: function() {
         if(!LocalStorage.has('token') || !LocalStorage.has('username')) {
-            this.$route.push('/login')
+            this.$router.push('/login')
+            return
         }
+        this.$router.push('/card')
+    },
+    beforeRouteUpdate: function(to, from, next) {
+        if(to.path === '/') {
+            this.$router.push('/card')
+            return
+        }
+        next()
     }
 }
 </script>

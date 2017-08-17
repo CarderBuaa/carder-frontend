@@ -6,6 +6,7 @@
                     <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
                     <div class="card-content">
                         <!-- <button class="primary" @click="$refs.basicModal.open()">修改</button> -->
+                        <button class="primary" @click="downloadCard(card.id)" v-if="isCordova">下载</button>
                         <button class="clear negative" @click="delCard(card.id)">删除</button>
                     </div>
                 </div>
@@ -101,7 +102,8 @@ export default {
                 phone: []
             },
             cards: [],
-            username: ''
+            username: '',
+            isCordova: false
         }
     },
     methods: {
@@ -134,6 +136,21 @@ export default {
                 })
             }
         },
+        downloadCard: function(id) {
+            window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Download/', dirEntry => {
+                dirEntry.getFile('card' + id + '.jpg', {create: true, exclusive: false}, fileEntry => {
+                    let fileTransfer = new FileTransfer()
+                    let fileURL = fileEntry.toURL()
+                    fileTransfer.download(
+                        this.$http.options.root + 'card/' + id + '?username=' + this.username,
+                        fileURL,
+                        entry => {
+                            alert('下载成功! 名片保存在Download文件夹下')
+                        }
+                    )
+                })
+            })
+        },
         makeOptions: function(arr) {
             let options = []
             for(let i = 0; i < arr.length; i++) {
@@ -164,8 +181,12 @@ export default {
     },
     created: function() {
         Loading.show()
+        if(typeof cordova === 'object') {
+            this.isCordova = true
+        }
         if(!LocalStorage.has('token') || !LocalStorage.has('username')) {
             this.$router.push('/login')
+            return
         }
         this.username = LocalStorage.get.item('username')
         this.$http.get('user/' + LocalStorage.get.item('username'), {
@@ -185,6 +206,7 @@ export default {
                 LocalStorage.remove('token')
                 LocalStorage.remove('username')
                 this.$router.push('/login')
+                return
             }
             else {
                 Toast.create.negative({

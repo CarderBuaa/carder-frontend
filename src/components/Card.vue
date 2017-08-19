@@ -3,7 +3,7 @@
             <div class="profile-page layout-padding">
                 <h1>名片信息</h1>
                 <div class="card" v-for="card in cards" :key="card.id">
-                    <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
+                    <img height="483" :src="$http.options.root + 'card/' + card.id + '?username=' + username">
                     <div class="card-content">
                         <!-- <button class="primary" @click="$refs.basicModal.open()">修改</button> -->
                         <button class="primary" @click="downloadCard(card.id)" v-if="isCordova">下载</button>

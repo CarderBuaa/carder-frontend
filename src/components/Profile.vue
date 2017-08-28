@@ -2,99 +2,157 @@
     <div class="layout-view">
         <div class="profile-page layout-padding">
             <h1>个人信息</h1>
-            <div class="card">
-                <div class="card-content">
-                    <form action="">
-                        <div class="row items-center gutter">
-                            <div class="width-1of5 right-aligned">
-                                <label class="">姓名</label>
-                            </div>
-                            <div class="auto">
-                                <input type="text" class="full-width" v-model="formdata.name">
-                            </div>
-                        </div>
+            <q-card>
+                
+                <form>
+                    <q-card-main>
+                        <q-card-title>基本信息</q-card-title>
+                        <q-field
+                            icon="account_circle"
+                            :error="$v.profileData.name.$error"
+                            :helper="!$v.profileData.name.required ? '请输入姓名' : ''">
+                            <q-input type="text" float-label="姓名" v-model="profileData.name" @input="$v.profileData.name.$touch()" />
+                        </q-field>
 
-                        <div class="row items-center gutter" v-for="(occupation, index) in formdata.occupation" v-bind:key="'occupation' + index">
-                            <div class="width-1of5 right-aligned">
-                                <label v-if="index === 0" >职位</label>
-                                <label v-if="index !== 0" ></label>
-                            </div>
-                            <div class="width-3of5">
-                                <input type="text" class="full-width" v-model.number="formdata.occupation[index]">
-                            </div>
-                            <div class="width-1of5 ">
-                                <button v-if="index === 0" class="primary" @click.prevent="addField('occupation')">增加</button>
-                                <button v-if="index !== 0" class="clear negative" @click.prevent="delField('occupation', index)">删除</button>
-                            </div>
-                        </div>
+                        <q-field
+                            icon="account_box">
+                            <q-input type="text" float-label="职位" v-model="profileData.occupation" />
+                        </q-field>
 
-                        <div class="row items-center gutter" v-for="(email, index) in formdata.email" v-bind:key="'email' + index">
-                            <div class="width-1of5 right-aligned">
-                                <label v-if="index === 0" >电子邮箱</label>
-                                <label v-if="index !== 0" ></label>
-                            </div>
-                            <div class="width-3of5">
-                                <input type="text" class="full-width" v-model.number="formdata.email[index]">
-                            </div>
-                            <div class="width-1of5 ">
-                                <button v-if="index === 0" class="primary" @click.prevent="addField('email')">增加</button>
-                                <button v-if="index !== 0" class="clear negative" @click.prevent="delField('email', index)">删除</button>
-                            </div>
-                        </div>
+                        <q-field
+                            icon="mail"
+                            :error="$v.profileData.email.$error"
+                            :helper="!$v.profileData.email.required ? '请输入邮箱' : (!$v.profileData.email.email ? '邮箱格式不对' : '')">
+                            <q-input type="text" float-label="电子邮箱" v-model="profileData.email" @input="$v.profileData.email.$touch()" />
+                        </q-field>
 
-                        <div class="row items-center gutter" v-for="(address, index) in formdata.address" v-bind:key="'address' + index">
-                            <div class="width-1of5 right-aligned">
-                                <label v-if="index === 0" >地址</label>
-                                <label v-if="index !== 0" ></label>
-                            </div>
-                            <div class="width-3of5">
-                                <input type="text" class="full-width" v-model.number="formdata.address[index]">
-                            </div>
-                            <div class="width-1of5 ">
-                                <button v-if="index === 0" class="primary" @click.prevent="addField('address')">增加</button>
-                                <button v-if="index !== 0" class="clear negative" @click.prevent="delField('address', index)">删除</button>
-                            </div>
-                        </div>
+                        <q-field
+                            icon="fa-phone"
+                            :error="$v.profileData.phoneMobile.$error"
+                            :helper="!$v.profileData.phoneMobile.required ? '请输入手机号码' : ''">
+                            <q-input type="number" float-label="手机" v-model="profileData.phoneMobile"  @input="$v.profileData.phoneMobile.$touch()" />
+                        </q-field>
 
-                        <div class="row items-center gutter" v-for="(phone, index) in formdata.phone" v-bind:key="'phone' + index">
-                            <div class="width-1of5 right-aligned">
-                                <label v-if="index === 0" >电话</label>
-                                <label v-if="index !== 0" ></label>
-                            </div>
-                            <div class="width-3of5">
-                                <input type="number" class="full-width" v-model.number="formdata.phone[index]">
-                            </div>
-                            <div class="width-1of5 ">
-                                <button v-if="index === 0" class="primary" @click.prevent="addField('phone')">增加</button>
-                                <button v-if="index !== 0" class="clear negative" @click.prevent="delField('phone', index)">删除</button>
-                            </div>
-                        </div>
+                        <q-field icon="fa-globe">
+                            <q-input type="url" float-label="网址" v-model="profileData.url" />
+                        </q-field>
+                    </q-card-main>
 
-                        <div class="row gutter button-container profile-button-container">
-                            <div class="width-1of3 offset-1of3">
-                                <button class="primary full-width" @click.prevent="edit()">修改</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                    <q-card-separator />
+
+                    <q-card-main>
+                        <q-card-title>家庭信息</q-card-title>
+                        <q-field
+                            icon="place">
+                            <q-input type="text" float-label="家庭地址" v-model="profileData.addressHome" />
+                        </q-field>
+
+                        <q-field
+                            icon="fa-phone">
+                            <q-input type="number" float-label="家庭电话" v-model="profileData.phoneHome" />
+                        </q-field>
+
+                        <q-field
+                            icon="fa-fax">
+                            <q-input type="number" float-label="家庭传真" v-model="profileData.faxHome" />
+                        </q-field>
+                    </q-card-main>
+
+                    <q-card-separator />
+
+                    <q-card-main>
+                        <q-card-title>单位信息</q-card-title>
+                        <q-field
+                            icon="place">
+                            <q-input type="text" float-label="单位地址" v-model="profileData.addressWork" />
+                        </q-field>
+
+                        <q-field
+                            icon="fa-phone">
+                            <q-input type="number" float-label="单位电话" v-model="profileData.phoneWork" />
+                        </q-field>
+
+                        <q-field
+                            icon="fa-fax">
+                            <q-input type="number" float-label="单位传真" v-model="profileData.faxWork" />
+                        </q-field>
+                    </q-card-main>
+
+                    <q-card-actions>
+                        <q-btn @click="edit()" color='primary' :disable="$v.profileData.group.$invalid">修改</q-btn>
+                    </q-card-actions>
+                </form>
+                
+            </q-card>
         </div>
     </div>
 </template>
 
 <script>
-import { Loading, LocalStorage, Toast } from 'quasar'
+import {
+    QCard,
+    QCardMain,
+    QCardSeparator,
+    QCardTitle,
+    QCardActions,
+    QField,
+    QInput,
+    QBtn,
+    QIcon,
+    Loading,
+    LocalStorage,
+    Toast
+} from 'quasar'
+
+import {
+    required,
+    email,
+    numeric
+} from 'vuelidate/lib/validators'
 
 export default {
+    components: {
+        QCard,
+        QCardMain,
+        QCardSeparator,
+        QCardTitle,
+        QCardActions,
+        QField,
+        QInput,
+        QBtn,
+        QIcon
+    },
     data() {
         return {
-            formdata: {
+            profileData: {
                 name: '',
-                occupation: [undefined],
-                email: [undefined],
-                address: [undefined],
-                phone: [undefined]
+                occupation: '',
+                email: '',
+                addressHome: '',
+                phoneMobile: '',
+                phoneHome: '',
+                faxHome: '',
+                phoneWork: '',
+                addressWork: '',
+                faxWork: '',
+                url: ''
             }
+        }
+    },
+    validations: {
+        profileData: {
+            name: { required },
+            email: { required, email },
+            phoneMobile: { required, numeric },
+            phoneHome: { numeric },
+            phoneWork: { numeric },
+            faxHome: { numeric },
+            faxWork: { numeric },
+            group: [
+                'profileData.name',
+                'profileData.email',
+                'profileData.phoneMobile'
+            ]
         }
     },
     computed: {
@@ -118,9 +176,9 @@ export default {
         }
     },
     methods: {
-        edit: function() {
+        edit() {
             if(confirm('确定要修改吗?')) {
-                this.$http.put('user/' + LocalStorage.get.item('username'), this.parsedFormdata, {
+                this.$http.put('user/' + LocalStorage.get.item('username'), this.profileData, {
                     headers: {
                         'Access-Token': LocalStorage.get.item('token')
                     }
@@ -150,11 +208,9 @@ export default {
                 'Access-Token': LocalStorage.get.item('token')
             }
         }).then(resp => {
-            this.formdata.name = resp.data.name ? resp.data.name : ''
-            this.formdata.occupation = resp.data.occupation ? resp.data.occupation : [undefined]
-            this.formdata.address = resp.data.address ? resp.data.address : [undefined]
-            this.formdata.email = resp.data.email ? resp.data.email : [undefined]
-            this.formdata.phone = resp.data.phone ? resp.data.phone : [undefined]
+            for(let index in this.profileData) {
+                this.profileData[index] = resp.data[index]
+            }
             Loading.hide()
         }, resp => {
             if(resp.status === 401) {
@@ -175,9 +231,20 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .profile-button-container
     padding-top 1em
 .right-aligned
     text-align right
+hr.card-splitter
+    background black
+    width 100%
+</style>
+
+<style lang="stylus">
+.q-field-helper
+    display none
+.q-field-with-error
+    .q-field-helper
+        display block
 </style>

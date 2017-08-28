@@ -2,126 +2,242 @@
         <div class="layout-view">
             <div class="profile-page layout-padding">
                 <h1>名片信息</h1>
-                <div class="card card-container" v-for="card in cards" :key="card.id">
-                    <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
-                    <div class="card-content">
+                <q-card v-for="card in cards" :key="card.id">
+                    <q-card-media>
+                        <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
+                    </q-card-media>
+                    <q-card-actions>
                         <!-- <button class="primary" @click="$refs.basicModal.open()">修改</button> -->
-                        <button class="primary" @click="downloadCard(card.id)" v-if="isCordova">下载</button>
-                        <button class="clear negative" @click="delCard(card.id)">删除</button>
-                    </div>
-                </div>
+                        <q-btn color="primary" @click="downloadCard(card.id)" v-if="isCordova">下载</q-btn>
+                        <q-btn color="red" flat @click="delCard(card.id)">删除</q-btn>
+                    </q-card-actions>
+                </q-card>
             </div>
             <q-modal ref="basicModal">
                 <div class="cardModal">
                     <h4>增加名片</h4>
-                    <form action="">
-                        <div class="row items-center gutter">
-                            <div class="width-1of5 right-aligned">
-                                <label class="">姓名</label>
+                    <form>
+                        <q-field icon="account_circle" label="姓名">
+                            <q-input type="text" v-model="cardData.name" disable />
+                        </q-field>
+
+                        <q-field
+                            icon="visibility"
+                            helper="选择过多字段可能导致显示溢出"
+                            label="字段显示">
+                                <q-list no-border>
+                                    <q-item tag="label" v-for="data in checkboxes" :key="data.field">
+                                        <q-item-side>
+                                            <q-checkbox v-model="cardData[data.field]" />
+                                        </q-item-side>
+                                        <q-item-main>
+                                            <q-item-tile label>{{ data.name }}</q-item-tile>
+                                            <q-item-tile v-if="data.value" sublabel>{{ data.value }}</q-item-tile>
+                                        </q-item-main>
+                                    </q-item>
+                                </q-list>
+                        </q-field>
+
+                        <q-field
+                            icon="fa-globe"
+                            label="url显示方式">
+                            <q-option-group
+                                type="radio"
+                                color="secondary"
+                                v-model="cardData.url"
+                                :options="[
+                                    { label: '不显示', value: 0 },
+                                    { label: '显示为字段', value: 1 },
+                                    { label: '显示二维码', value: 2 }
+                                ]" />
+                        </q-field>
+
+                        <q-field
+                            icon="fa-globe"
+                            label="名片模板">
+                            <q-option-group
+                                type="radio"
+                                color="secondary"
+                                v-model="cardData.template"
+                                :options="[
+                                    { label: '二维码居左', value: 0 },
+                                    { label: '二维码居中', value: 1 },
+                                    { label: '二维码居右', value: 2 }
+                                ]" />
+                        </q-field>
+
+                        <q-field icon="image" label="背景">
+                            <div class="q-if row no-wrap items-center relative-position q-input text-primary">
+                                <div class="q-if-inner col row no-wrap items-center relative-position">
+                                    <input type="file" accept="image/png,image/gif,image/jpeg" class="col" @change="getFile('image', $event)">
+                                </div>
                             </div>
-                            <div class="auto">
-                                <input type="text" class="full-width" v-model="formdata.name" readonly>
+                        </q-field>
+
+                        <q-field icon="image" label="logo">
+                            <div class="q-if row no-wrap items-center relative-position q-input text-primary">
+                                <div class="q-if-inner col row no-wrap items-center relative-position">
+                                    <input type="file" accept="image/png,image/gif,image/jpeg" class="col" @change="getFile('logoImage', $event)">
+                                </div>
                             </div>
-                        </div>
-                        <div class="row items-center gutter">
-                            <div class="width-1of5 right-aligned">
-                                <label class="">职位</label>
-                            </div>
-                            <div class="auto">
-                                <q-select class="full-width" type="list" v-model="formdata.occupation" :options="makeOptions(profile.occupation)"></q-select>
-                            </div>
-                        </div>
-                        <div class="row items-center gutter">
-                            <div class="width-1of5 right-aligned">
-                                <label class="">电子邮箱</label>
-                            </div>
-                            <div class="auto">
-                                <q-select class="full-width" type="list" v-model="formdata.email" :options="makeOptions(profile.email)"></q-select>
-                            </div>
-                        </div>
-                        <div class="row items-center gutter">
-                            <div class="width-1of5 right-aligned">
-                                <label class="">地址</label>
-                            </div>
-                            <div class="auto">
-                                <q-select class="full-width" type="list" v-model="formdata.address" :options="makeOptions(profile.address)"></q-select>
-                            </div>
-                        </div>
-                        <div class="row items-center gutter">
-                            <div class="width-1of5 right-aligned">
-                                <label class="">电话</label>
-                            </div>
-                            <div class="auto">
-                                <q-select class="full-width" type="list" v-model="formdata.phone" :options="makeOptions(profile.phone)"></q-select>
-                            </div>
-                        </div>
-                        <div class="row items-center gutter">
-                            <div class="width-1of5 right-aligned">
-                                <label class="">背景</label>
-                            </div>
-                            <div class="auto">
-                                <input class="full-width" type="file" accept="image/png,image/gif,image/jpeg" @change="getFile($event)"></input>
-                            </div>
-                        </div>
-                        <div class="row gutter button-container">
-                            <div class="width-1of2">
-                                <button class="primary full-width" @click.prevent="addCardSubmit()">提交</button>
-                            </div>
-                            <div class="auto">
-                                <button class="clear negative full-width" @click.prevent="$refs.basicModal.close()">取消</button>
-                            </div>
-                        </div>
+                        </q-field>
+
+                        <logo-positioner @error="removeFile('logoImage', ...arguments)" :image="cardData.logoImage" v-show="cardData.logoImage" v-model="cardData.logoPos"></logo-positioner>
+
                     </form>
+                    <q-btn color="primary" @click="addCardSubmit">提交</q-btn>
+                    <q-btn color="red" flat @click="$refs.basicModal.close()">取消</q-btn>
                 </div>
             </q-modal>
-            <button class="primary raised circular absolute-bottom-right fab-card" @click="addCard()">
-                <i class="q-fab-icon">add</i>
-            </button>
+            <q-fixed-position  corner="bottom-right" :offset="[18, 18]">
+                <q-btn round color="primary" @click="addCard()">
+                    <q-icon name="add" />
+                </q-btn>
+            </q-fixed-position>
         </div>
 </template>
 
 <script>
-import { Loading, LocalStorage, Toast } from 'quasar'
+import {
+    QFixedPosition,
+    QBtn,
+    QIcon,
+    QModal,
+    QField,
+    QInput,
+    QCheckbox,
+    QList,
+    QItem,
+    QItemSide,
+    QItemMain,
+    QItemTile,
+    QOptionGroup,
+    QCard,
+    QCardTitle,
+    QCardSeparator,
+    QCardMedia,
+    QCardActions,
+    Loading,
+    LocalStorage,
+    Toast
+} from 'quasar'
+
+import LogoPositioner from './LogoPositioner.vue'
 
 export default {
+    components: {
+        QFixedPosition,
+        QIcon,
+        QBtn,
+        QModal,
+        QField,
+        QInput,
+        QCheckbox,
+        QList,
+        QItem,
+        QItemSide,
+        QItemMain,
+        QItemTile,
+        QOptionGroup,
+        QCard,
+        QCardTitle,
+        QCardSeparator,
+        QCardMedia,
+        QCardActions,
+        LogoPositioner
+    },
     data() {
         return {
-            formdata: {
+            cardData: {
+                name: false,
+                occupation: false,
+                email: false,
+                addressHome: false,
+                phoneMobile: false,
+                phoneHome: false,
+                faxHome: false,
+                phoneWork: false,
+                addressWork: false,
+                faxWork: false,
+                template: 0,
+                url: 0,
+                image: null,
+                logoImage: null,
+                logoPos: [0, 0]
+            },
+            profileData: {
                 name: '',
                 occupation: '',
                 email: '',
-                address: '',
-                phone: '',
-                image: ''
+                addressHome: '',
+                phoneMobile: '',
+                phoneHome: '',
+                faxHome: '',
+                phoneWork: '',
+                addressWork: '',
+                faxWork: '',
+                url: ''
             },
-            profile: {
-                name: '',
-                occupation: [],
-                email: [],
-                address: [],
-                phone: []
+            checkboxModel: {
+                occupation: '职位',
+                email: '邮箱',
+                phoneMobile: '手机',
+                addressHome: '家庭地址',
+                phoneHome: '家庭电话',
+                faxHome: '家庭传真',
+                addressWork: '单位地址',
+                phoneWork: '单位电话',
+                faxWork: '单位传真'
             },
             cards: [],
             username: '',
             isCordova: false
         }
     },
-    methods: {
-        addCard: function() {
-            this.formdata = {
-                name: this.profile.name,
-                occupation: '',
-                email: '',
-                address: '',
-                phone: '',
-                image: ''
+    computed: {
+        checkboxes() {
+            let ret = []
+            for(let index in this.profileData) {
+                if(index in this.checkboxModel && this.profileData[index]) {
+                    ret.push({
+                        field: index,
+                        name: this.checkboxModel[index],
+                        value: this.profileData[index]
+                    })
+                }
             }
+            return ret
+        }
+    },
+    methods: {
+        addCard() {
+            for(let index in this.cardData) {
+                if(index === 'name') {
+                    this.cardData[index] = this.profileData.name
+                } else if(index === 'url' || index === 'template') {
+                    this.cardData[index] = 0
+                } else if(index === 'logoPos') {
+                    this.cardData[index][0] = 0
+                    this.cardData[index][1] = 0
+                } else if(index === 'image' || index === 'logoImage') {
+                    this.cardData[index] = null
+                } else {
+                    this.cardData[index] = false
+                }
+            }
+            this.cardData.name = this.profileData.name
             this.$refs.basicModal.open()
         },
-        getFile: function(event) {
-            this.formdata.image = event.target.files[0]
+        getFile(target, event) {
+            this.cardData[target] = event.target.files[0]
         },
-        delCard: function(id) {
+        removeFile(target, message) {
+            Toast.create.negative({
+                html: message
+            })
+            this.cardData[target] = null
+        },
+        delCard(id) {
             if(confirm('确认要删除吗?')) {
                 this.$http.delete('card/' + id, {
                     headers: {
@@ -136,7 +252,7 @@ export default {
                 })
             }
         },
-        downloadCard: function(id) {
+        downloadCard(id) {
             window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Download/', dirEntry => {
                 dirEntry.getFile('card' + id + '.jpg', {create: true, exclusive: false}, fileEntry => {
                     let fileTransfer = new FileTransfer()
@@ -151,22 +267,18 @@ export default {
                 })
             })
         },
-        makeOptions: function(arr) {
-            let options = []
-            for(let i = 0; i < arr.length; i++) {
-                options.push({
-                    label: arr[i],
-                    value: arr[i]
-                })
+        addCardSubmit() {
+            let cardData = new FormData()
+            for(let key in this.cardData) {
+                cardData.append(key, this.cardData[key])
             }
-            return options
-        },
-        addCardSubmit: function() {
-            let formdata = new FormData()
-            for(let key in this.formdata) {
-                formdata.append(key, this.formdata[key])
-            }
-            this.$http.post('card', formdata, {
+            cardData.delete('logoPos')
+            cardData.delete('name')
+            cardData.append('logoX', this.cardData.logoPos[0])
+            cardData.append('logoY', this.cardData.logoPos[1])
+
+
+            this.$http.post('card', cardData, {
                 headers: {
                     'Access-Token': LocalStorage.get.item('token')
                 }
@@ -179,7 +291,7 @@ export default {
             })
         }
     },
-    created: function() {
+    created() {
         Loading.show()
         if(typeof cordova === 'object') {
             this.isCordova = true
@@ -194,11 +306,9 @@ export default {
                 'Access-Token': LocalStorage.get.item('token')
             }
         }).then(resp => {
-            this.profile.name = resp.data.name
-            this.profile.occupation = resp.data.occupation
-            this.profile.address = resp.data.address
-            this.profile.email = resp.data.email
-            this.profile.phone = resp.data.phone
+            for(let index in resp.data) {
+                this.profileData[index] = resp.data[index]
+            }
             this.cards = resp.data.cards
             Loading.hide()
         }, resp => {
@@ -221,7 +331,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .cardModal
     padding 30px
 

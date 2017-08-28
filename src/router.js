@@ -24,6 +24,7 @@ export default new VueRouter({
         {
             path: '/',
             component: load('Index'),
+            redirect: '/card',
             children: [
                 {
                     path: 'profile',

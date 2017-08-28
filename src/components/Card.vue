@@ -60,9 +60,9 @@
                                 color="secondary"
                                 v-model="cardData.template"
                                 :options="[
-                                    { label: '二维码居左', value: 0 },
-                                    { label: '二维码居中', value: 1 },
-                                    { label: '二维码居右', value: 2 }
+                                    { label: '居左显示', value: 0 },
+                                    { label: '居右显示', value: 1 },
+                                    { label: '居中显示', value: 2 }
                                 ]" />
                         </q-field>
 

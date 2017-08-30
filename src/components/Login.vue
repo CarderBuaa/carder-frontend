@@ -107,6 +107,9 @@
                     <!-- <q-step title="完成">...</q-step> -->
                 </q-stepper>
                 </q-card-main>
+                <q-inner-loading :visible="working">
+                    <q-spinner-gears size="50px" color="primary"></q-spinner-gears>
+                </q-inner-loading>
             </q-card>
         </div>
     </div>
@@ -130,7 +133,9 @@ import {
     QItemTile,
     Toast,
     LocalStorage,
-    Loading
+    Loading,
+    QInnerLoading,
+    QSpinnerGears
 } from 'quasar'
 
 import {
@@ -155,7 +160,9 @@ export default {
         QItem,
         QItemSide,
         QItemMain,
-        QItemTile
+        QItemTile,
+        QInnerLoading,
+        QSpinnerGears
     },
     data() {
         return {
@@ -170,7 +177,8 @@ export default {
                 email: '',
                 phoneMobile: ''
             },
-            logining: true
+            logining: true,
+            working: false
         }
     },
     validations: {
@@ -204,6 +212,7 @@ export default {
                 })
                 return
             }
+            this.working = true
             this.$http.post('user/accesstoken', {
                 username: this.loginData.username,
                 password: this.loginData.password
@@ -214,6 +223,7 @@ export default {
                 LocalStorage.set('username', this.loginData.username)
                 this.$router.push('/card')
             }, resp => {
+                this.working = false
                 switch(resp.status) {
                 case 400:
                     Toast.create.negative({
@@ -241,6 +251,7 @@ export default {
                 })
                 return
             }
+            this.working = true
             this.$http.post('user', {
                 username: this.registerData.username,
                 password: this.registerData.password,
@@ -249,12 +260,14 @@ export default {
             }, {
                 emulateJSON: true
             }).then(resp => {
+                this.working = false
                 Toast.create.positive({
                     html: '注册成功! 请登录'
                 })
                 this.logining = true
                 this.registerDataReset()
             }, resp => {
+                this.working = false
                 switch(resp.status) {
                 case 400:
                     Toast.create.negative({
@@ -291,6 +304,7 @@ export default {
         width 90vw
         max-width 600px
         padding 25px
+        position relative
         .button-container
             padding 1rem 0 0 0
         .q-stepper

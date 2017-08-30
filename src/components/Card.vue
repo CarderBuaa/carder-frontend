@@ -277,7 +277,6 @@ export default {
             cardData.append('logoX', this.cardData.logoPos[0])
             cardData.append('logoY', this.cardData.logoPos[1])
 
-
             this.$http.post('card', cardData, {
                 headers: {
                     'Access-Token': LocalStorage.get.item('token')

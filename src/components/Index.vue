@@ -23,9 +23,13 @@
                     <q-item-side icon="contacts" />
                     <q-item-main label="名片信息" sublabel="生成名片" />
                 </q-side-link>
-                <q-side-link item icon="person" :to="{path: '/profile', exact: true}">
+                <q-side-link item :to="{path: '/profile', exact: true}">
                     <q-item-side icon="person" />
                     <q-item-main label="个人信息" sublabel="修改个人信息" />
+                </q-side-link>
+                <q-side-link item :to="{path: '/admin', exact: true}">
+                    <q-item-side icon="settings" />
+                    <q-item-main label="管理" sublabel="管理用户" />
                 </q-side-link>
             </q-list>
         </div>

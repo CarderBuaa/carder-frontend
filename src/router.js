@@ -33,6 +33,10 @@ export default new VueRouter({
                 {
                     path: 'card',
                     component: load('Card')
+                },
+                {
+                    path: 'admin',
+                    component: load('Admin')
                 }
             ]
         }, // Default

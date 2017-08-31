@@ -12,6 +12,7 @@
                         <q-btn color="red" flat @click="delCard(card.id)">删除</q-btn>
                     </q-card-actions>
                 </q-card>
+                <h4 v-show="!cards ||cards.length === 0" class="placeholder">请点击右下角生成名片</h4>
             </div>
             <q-modal ref="basicModal">
                 <div class="cardModal">
@@ -90,7 +91,7 @@
                 </div>
             </q-modal>
             <q-fixed-position  corner="bottom-right" :offset="[18, 18]">
-                <q-btn round color="primary" @click="addCard()">
+                <q-btn round color="primary" @click="addCard()" :disable="!profileData.name">
                     <q-icon name="add" />
                 </q-btn>
             </q-fixed-position>
@@ -340,4 +341,6 @@ export default {
 .card-container
     height: 0
     padding-bottom calc(60% + 65px)
+.placeholder
+    color #ccc
 </style>

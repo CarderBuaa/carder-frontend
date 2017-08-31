@@ -41,7 +41,8 @@
 
                         <q-field
                             icon="fa-globe"
-                            label="url显示方式">
+                            label="url显示方式"
+                            v-show="profileData.url">
                             <q-option-group
                                 type="radio"
                                 color="secondary"

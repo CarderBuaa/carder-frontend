@@ -27,7 +27,7 @@
                     <q-item-side icon="person" />
                     <q-item-main label="个人信息" sublabel="修改个人信息" />
                 </q-side-link>
-                <q-side-link item :to="{path: '/admin', exact: true}">
+                <q-side-link v-if="role === 1" item :to="{path: '/admin', exact: true}">
                     <q-item-side icon="settings" />
                     <q-item-main label="管理" sublabel="管理用户" />
                 </q-side-link>
@@ -55,7 +55,8 @@ import {
     QItemSide,
     QSideLink,
     QItemMain,
-    LocalStorage
+    LocalStorage,
+    Loading
 } from 'quasar'
 
 export default {
@@ -69,10 +70,12 @@ export default {
         QList,
         QItemSide,
         QSideLink,
-        QItemMain
+        QItemMain,
+        Loading
     },
     data() {
         return {
+            role: 0
         }
     },
     methods: {
@@ -89,6 +92,28 @@ export default {
             this.$router.push('/login')
             return
         }
+        this.$http.get('user/' + LocalStorage.get.item('username'), {
+            headers: {
+                'Access-Token': LocalStorage.get.item('token')
+            }
+        }).then(resp => {
+            this.role = resp.data.role
+            Loading.hide()
+        }, resp => {
+            if(resp.status === 401) {
+                LocalStorage.remove('token')
+                LocalStorage.remove('username')
+                this.$router.push('/login')
+            }
+            else {
+                Toast.create.negative({
+                    html: '未知错误'
+                })
+                Loading.show({
+                    message: '未知错误, 请刷新页面重试'
+                })
+            }
+        })
     }
 }
 </script>

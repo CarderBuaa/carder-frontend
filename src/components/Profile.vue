@@ -79,7 +79,7 @@
                     </q-card-main>
 
                     <q-card-actions>
-                        <q-btn @click="edit()" color='primary' :disable="$v.profileData.group.$invalid">修改</q-btn>
+                        <q-btn @click="editPeofile()" color='primary' :disable="$v.profileData.group.$invalid">修改</q-btn>
                     </q-card-actions>
                 </form>
                 
@@ -176,7 +176,7 @@ export default {
         }
     },
     methods: {
-        edit() {
+        editProfile() {
             if(confirm('确定要修改吗?')) {
                 this.$http.put('user/' + LocalStorage.get.item('username'), this.profileData, {
                     headers: {

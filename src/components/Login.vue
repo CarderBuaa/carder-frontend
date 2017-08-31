@@ -7,109 +7,116 @@
         <div>
             <q-card class="login-card bg-white column items-center justify-center">
                 <q-card-main class="full-width items-center ">
-                <h1>Carder</h1>
-                <form v-show="logining">
-                    <q-field
-                        icon="account_circle"
-                        :error="$v.loginData.username.$error"
-                        :helper="!$v.loginData.username.required ? '请输入用户名' : ''">
-                        <q-input type="text" float-label="用户名" v-model="loginData.username" @input="$v.loginData.username.$touch()" />
-                    </q-field>
-                    <q-field
-                        icon="fa-key"
-                        :error="$v.loginData.password.$error"
-                        :helper="!$v.loginData.password.required ? '请输入密码' : ''">
-                        <q-input type="password" float-label="密码" v-model="loginData.password" @input="$v.loginData.password.$touch()" />
-                    </q-field>
-                    <div class="row sm-gutter button-container">
-                        <div class="col-6">
-                            <q-btn color="primary" class="col-6 full-width block" @click.prevent="login()">登陆</q-btn>
-                        </div>
-                        <div class="col-6">
-                            <q-btn color="dark" class="col-6 full-width block" @click.prevent="logining = false">注册</q-btn>
-                        </div>
-                    </div>
-                </form>
-                <q-btn outline color="dark" v-show="!logining" @click="logining = true">
-                    <q-icon name="keyboard_arrow_left" ></q-icon>
-                    我有账号, 我要登陆
-                </q-btn>
-                <q-stepper ref="stepper" v-show="!logining" vertical>
-                    <q-step default title="注册信息">
+                    <h1>Carder</h1>
+                    <div v-show="logining">
                         <form>
                             <q-field
-                                icon="fa-user"
-                                :error="$v.registerData.username.$error"
-                                :helper="!$v.registerData.username.required ? '请输入用户名' : ''">
-                                <q-input type="text" float-label="用户名" @input="$v.registerData.username.$touch()" v-model="registerData.username" />
+                                icon="account_circle"
+                                :error="$v.loginData.username.$error"
+                                :helper="!$v.loginData.username.required ? '请输入用户名' : ''">
+                                <q-input type="text" float-label="用户名" v-model="loginData.username" @input="$v.loginData.username.$touch()" />
                             </q-field>
                             <q-field
                                 icon="fa-key"
-                                :error="$v.registerData.password.$error"
-                                :helper="!$v.registerData.password.required ? '请输入密码' : ''">
-                                <q-input type="password" float-label="密码" @input="$v.registerData.password.$touch()" v-model="registerData.password" />
+                                :error="$v.loginData.password.$error"
+                                :helper="!$v.loginData.password.required ? '请输入密码' : ''">
+                                <q-input type="password" float-label="密码" v-model="loginData.password" @input="$v.loginData.password.$touch()" />
                             </q-field>
-                            <q-field
-                                icon="fa-key"
-                                :error="$v.registerData.passwordRepeat.$error"
-                                :helper="!$v.registerData.passwordRepeat.required ? '请再次输入密码' : (!$v.registerData.passwordRepeat.sameAsPassword ? '密码不一致' : '')">
-                                <q-input type="password" float-label="重复密码" @input="$v.registerData.passwordRepeat.$touch()" v-model="registerData.passwordRepeat" />
-                            </q-field>
-                            <q-field
-                                icon="email"
-                                :error="$v.registerData.email.$error"
-                                :helper="!$v.registerData.email.required ? '请输入邮箱' : (!$v.registerData.email.email ? '邮箱格式不对' : '')">
-                                <q-input type="email" float-label="电子邮箱" @input="$v.registerData.email.$touch()" v-model="registerData.email" />
-                            </q-field>
-                            <q-field
-                                icon="fa-phone"
-                                :error="$v.registerData.phoneMobile.$error"
-                                :helper="!$v.registerData.phoneMobile.required ? '请输入手机' : (!$v.registerData.phoneMobile.numeric ? '电话必须为数字' : '')">
-                                <q-input type="number" float-label="手机" @input="$v.register.phoneMobile.$touch()" v-model="registerData.phoneMobile" />
-                            </q-field>
+
                         </form>
-                        <q-stepper-navigation>
-                            <q-btn color="primary" :disabled="$v.registerData.group.$invalid" @click="$refs.stepper.next()">确认</q-btn>
-                        </q-stepper-navigation>
-                    </q-step>
-                    <q-step title="确认">
-                        <q-list>
-                            <q-item>
-                                 <q-item-side icon="fa-user" color="gray" />
-                                 <q-item-main>
-                                     <q-item-tile label>{{ registerData.username }}</q-item-tile>
-                                 </q-item-main>
-                            </q-item>
-                            <q-item>
-                                 <q-item-side icon="fa-key" color="gray" />
-                                 <q-item-main>
-                                     <q-item-tile label>******</q-item-tile>
-                                 </q-item-main>
-                            </q-item>
-                            <q-item>
-                                 <q-item-side icon="mail" color="gray" />
-                                 <q-item-main>
-                                     <q-item-tile label>{{ registerData.email }}</q-item-tile>
-                                 </q-item-main>
-                            </q-item>
-                            <q-item>
-                                 <q-item-side icon="fa-phone" color="gray" />
-                                 <q-item-main>
-                                     <q-item-tile label>{{ registerData.phoneMobile }}</q-item-tile>
-                                 </q-item-main>
-                            </q-item>
-                        </q-list>
-                        <q-stepper-navigation>
-                            <q-btn flat @click="$refs.stepper.previous()">修改</q-btn>
-                            <q-btn color="primary" @click="register()">确定, 我要注册</q-btn>
-                        </q-stepper-navigation>
-                    </q-step>
-                    <!-- <q-step title="完成">...</q-step> -->
-                </q-stepper>
+                        <div class="row sm-gutter button-container">
+                            <div class="col-6">
+                                <q-btn color="primary" class="col-6 full-width block" @click="login">
+                                    登陆
+                                    <q-spinner slot="loading" />
+                                </q-btn>
+                            </div>
+                            <div class="col-6">
+                                <q-btn color="dark" class="col-6 full-width block" @click="logining = false">注册</q-btn>
+                            </div>
+                        </div>
+                    </div>
+                    <q-btn outline color="dark" v-show="!logining" @click="logining = true">
+                        <q-icon name="keyboard_arrow_left" ></q-icon>
+                        我有账号, 我要登陆
+                    </q-btn>
+
+                    <q-stepper ref="stepper" v-show="!logining" vertical>
+                        <q-step default title="注册信息">
+                            <form>
+                                <q-field
+                                    icon="fa-user"
+                                    :error="$v.registerData.username.$error"
+                                    :helper="!$v.registerData.username.required ? '请输入用户名' : ''">
+                                    <q-input type="text" float-label="用户名" @input="$v.registerData.username.$touch()" v-model="registerData.username" />
+                                </q-field>
+                                <q-field
+                                    icon="fa-key"
+                                    :error="$v.registerData.password.$error"
+                                    :helper="!$v.registerData.password.required ? '请输入密码' : ''">
+                                    <q-input type="password" float-label="密码" @input="$v.registerData.password.$touch()" v-model="registerData.password" />
+                                </q-field>
+                                <q-field
+                                    icon="fa-key"
+                                    :error="$v.registerData.passwordRepeat.$error"
+                                    :helper="!$v.registerData.passwordRepeat.required ? '请再次输入密码' : (!$v.registerData.passwordRepeat.sameAsPassword ? '密码不一致' : '')">
+                                    <q-input type="password" float-label="重复密码" @input="$v.registerData.passwordRepeat.$touch()" v-model="registerData.passwordRepeat" />
+                                </q-field>
+                                <q-field
+                                    icon="email"
+                                    :error="$v.registerData.email.$error"
+                                    :helper="!$v.registerData.email.required ? '请输入邮箱' : (!$v.registerData.email.email ? '邮箱格式不对' : '')">
+                                    <q-input type="email" float-label="电子邮箱" @input="$v.registerData.email.$touch()" v-model="registerData.email" />
+                                </q-field>
+                                <q-field
+                                    icon="fa-phone"
+                                    :error="$v.registerData.phoneMobile.$error"
+                                    :helper="!$v.registerData.phoneMobile.required ? '请输入手机' : (!$v.registerData.phoneMobile.numeric ? '电话必须为数字' : '')">
+                                    <q-input type="number" float-label="手机" @input="$v.register.phoneMobile.$touch()" v-model="registerData.phoneMobile" />
+                                </q-field>
+                            </form>
+                            <q-stepper-navigation>
+                                <q-btn color="primary" :disabled="$v.registerData.group.$invalid" @click="$refs.stepper.next()">确认</q-btn>
+                            </q-stepper-navigation>
+                        </q-step>
+                        <q-step title="确认">
+                            <q-list>
+                                <q-item>
+                                    <q-item-side icon="fa-user" color="gray" />
+                                    <q-item-main>
+                                        <q-item-tile label>{{ registerData.username }}</q-item-tile>
+                                    </q-item-main>
+                                </q-item>
+                                <q-item>
+                                    <q-item-side icon="fa-key" color="gray" />
+                                    <q-item-main>
+                                        <q-item-tile label>******</q-item-tile>
+                                    </q-item-main>
+                                </q-item>
+                                <q-item>
+                                    <q-item-side icon="mail" color="gray" />
+                                    <q-item-main>
+                                        <q-item-tile label>{{ registerData.email }}</q-item-tile>
+                                    </q-item-main>
+                                </q-item>
+                                <q-item>
+                                    <q-item-side icon="fa-phone" color="gray" />
+                                    <q-item-main>
+                                        <q-item-tile label>{{ registerData.phoneMobile }}</q-item-tile>
+                                    </q-item-main>
+                                </q-item>
+                            </q-list>
+                            <q-stepper-navigation>
+                                <q-btn flat @click="$refs.stepper.previous()">修改</q-btn>
+                                <q-btn color="primary" @click="register">
+                                    确定, 我要注册
+                                    <q-spinner slot="loading" />
+                                </q-btn>
+                            </q-stepper-navigation>
+                        </q-step>
+                        <!-- <q-step title="完成">...</q-step> -->
+                    </q-stepper>
                 </q-card-main>
-                <q-inner-loading :visible="working">
-                    <q-spinner-gears size="50px" color="primary"></q-spinner-gears>
-                </q-inner-loading>
             </q-card>
         </div>
     </div>
@@ -119,6 +126,7 @@
 import {
     QCard,
     QCardMain,
+    QCardActions,
     QField,
     QInput,
     QBtn,
@@ -134,8 +142,7 @@ import {
     Toast,
     LocalStorage,
     Loading,
-    QInnerLoading,
-    QSpinnerGears
+    QSpinner
 } from 'quasar'
 
 import {
@@ -149,6 +156,7 @@ export default {
     components: {
         QCard,
         QCardMain,
+        QCardActions,
         QField,
         QInput,
         QBtn,
@@ -161,8 +169,7 @@ export default {
         QItemSide,
         QItemMain,
         QItemTile,
-        QInnerLoading,
-        QSpinnerGears
+        QSpinner
     },
     data() {
         return {
@@ -177,8 +184,7 @@ export default {
                 email: '',
                 phoneMobile: ''
             },
-            logining: true,
-            working: false
+            logining: true
         }
     },
     validations: {
@@ -205,11 +211,13 @@ export default {
         }
     },
     methods: {
-        login() {
+        login(e, done) {
+            console.log(done)
             if(!this.loginData.username || !this.loginData.password) {
                 Toast.create.negative({
                     html: '用户名或密码不能为空!'
                 })
+                done()
                 return
             }
             this.working = true
@@ -223,7 +231,7 @@ export default {
                 LocalStorage.set('username', this.loginData.username)
                 this.$router.push('/card')
             }, resp => {
-                this.working = false
+                done()
                 switch(resp.status) {
                 case 400:
                     Toast.create.negative({
@@ -243,12 +251,14 @@ export default {
             this.registerData.passwordRepeat = ''
             this.registerData.email = ''
             this.registerData.phoneMobile = ''
+            this.$refs.stepper.reset()
         },
-        register() {
+        register(e, done) {
             if(!this.registerData.username || !this.registerData.password) {
                 Toast.create.negative({
                     html: '用户名或密码不能为空!'
                 })
+                done()
                 return
             }
             this.working = true
@@ -260,14 +270,14 @@ export default {
             }, {
                 emulateJSON: true
             }).then(resp => {
-                this.working = false
+                done()
                 Toast.create.positive({
                     html: '注册成功! 请登录'
                 })
                 this.logining = true
                 this.registerDataReset()
             }, resp => {
-                this.working = false
+                done()
                 switch(resp.status) {
                 case 400:
                     Toast.create.negative({

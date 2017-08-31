@@ -78,8 +78,11 @@
                         </q-field>
                     </q-card-main>
 
-                    <q-card-actions>
-                        <q-btn @click="editPeofile()" color='primary' :disable="$v.profileData.group.$invalid">修改</q-btn>
+                    <q-card-actions  align="around">
+                        <q-btn class="action-btn" @click="editProfile" color='primary' :disable="$v.profileData.group.$invalid">
+                            修改
+                            <q-spinner slot="loading" />
+                        </q-btn>
                     </q-card-actions>
                 </form>
                 
@@ -99,6 +102,7 @@ import {
     QInput,
     QBtn,
     QIcon,
+    QSpinner,
     Loading,
     LocalStorage,
     Toast
@@ -120,7 +124,8 @@ export default {
         QField,
         QInput,
         QBtn,
-        QIcon
+        QIcon,
+        QSpinner
     },
     data() {
         return {
@@ -176,7 +181,7 @@ export default {
         }
     },
     methods: {
-        editProfile() {
+        editProfile(e, done) {
             if(confirm('确定要修改吗?')) {
                 this.$http.put('user/' + LocalStorage.get.item('username'), this.profileData, {
                     headers: {
@@ -188,7 +193,10 @@ export default {
                     Toast.create.negative({
                         html: '未知错误'
                     })
+                    done()
                 })
+            } else {
+                done()
             }
         },
         addField: function(field) {
@@ -239,6 +247,8 @@ export default {
 hr.card-splitter
     background black
     width 100%
+.action-btn
+    width 100px
 </style>
 
 <style lang="stylus">

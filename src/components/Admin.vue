@@ -104,7 +104,7 @@ export default {
         editUser(e, done) {
             if(confirm('确定要修改吗?')) {
                 this.$http.put('user/' + this.formData.username, {
-                    password:this.formData.password
+                    password: this.formData.password
                 }, {
                     headers: {
                         'Access-Token': LocalStorage.get.item('token')
@@ -117,8 +117,10 @@ export default {
                     })
                     done()
                 })
+            } else {
+                done()
             }
-        } 
+        }
     },
     computed: {
         userOptions() {
@@ -137,26 +139,6 @@ export default {
         if(!LocalStorage.has('token') || !LocalStorage.has('username')) {
             this.$router.push('/login')
         }
-        // this.$http.get('user/' + LocalStorage.get.item('username'), {
-        //     headers: {
-        //         'Access-Token': LocalStorage.get.item('token')
-        //     }
-        // }).then(resp => {
-        //     Loading.hide()
-        // }, resp => {
-        //     if(resp.status === 401) {
-        //         LocalStorage.remove('token')
-        //         LocalStorage.remove('username')
-        //         this.$router.push('/login')
-        //     } else {
-        //         Toast.create.negative({
-        //             html: '未知错误'
-        //         })
-        //         Loading.show({
-        //             message: '未知错误, 请刷新页面重试'
-        //         })
-        //     }
-        // })
         this.$http.get('manage/allUserInfo', {
             headers: {
                 'Access-Token': LocalStorage.get.item('token')

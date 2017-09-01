@@ -286,9 +286,17 @@ export default {
             }).then(resp => {
                 window.location.reload()
             }, resp => {
-                Toast.create.negative({
-                    html: '未知错误'
-                })
+                switch(resp.status) {
+                case 400:
+                    Toast.create.negative({
+                        html: resp.data.message
+                    })
+                    break
+                default:
+                    Toast.create.negative({
+                        html: '未知错误'
+                    })
+                }
             })
         }
     },

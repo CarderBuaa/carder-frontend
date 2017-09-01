@@ -87,7 +87,10 @@
                         <logo-positioner @error="removeFile('logoImage', ...arguments)" :image="cardData.logoImage" v-show="cardData.logoImage" v-model="cardData.logoPos"></logo-positioner>
 
                     </form>
-                    <q-btn color="primary" @click="addCardSubmit">提交</q-btn>
+                    <q-btn color="primary" @click="addCardSubmit">
+                        提交
+                        <q-spinner slot="loading" />
+                    </q-btn>
                     <q-btn color="red" flat @click="$refs.basicModal.close()">取消</q-btn>
                 </div>
             </q-modal>
@@ -119,6 +122,7 @@ import {
     QCardSeparator,
     QCardMedia,
     QCardActions,
+    QSpinner,
     Loading,
     LocalStorage,
     Toast
@@ -146,6 +150,7 @@ export default {
         QCardSeparator,
         QCardMedia,
         QCardActions,
+        QSpinner,
         LogoPositioner
     },
     data() {
@@ -269,13 +274,13 @@ export default {
                 })
             })
         },
-        addCardSubmit() {
+        addCardSubmit(e, done) {
             let cardData = new FormData()
             for(let key in this.cardData) {
-                cardData.append(key, this.cardData[key])
+                if(key !== 'logoPos' && key !== 'name') {
+                    cardData.append(key, this.cardData[key])
+                }
             }
-            cardData.delete('logoPos')
-            cardData.delete('name')
             cardData.append('logoX', this.cardData.logoPos[0])
             cardData.append('logoY', this.cardData.logoPos[1])
 
@@ -286,6 +291,7 @@ export default {
             }).then(resp => {
                 window.location.reload()
             }, resp => {
+                done()
                 switch(resp.status) {
                 case 400:
                     Toast.create.negative({

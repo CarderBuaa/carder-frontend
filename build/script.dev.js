@@ -54,6 +54,11 @@ Object.keys(proxyTable).forEach(function (context) {
   app.use(proxyMiddleware(context, options))
 })
 
+app.use(proxyMiddleware('/api/v1/', {
+  target: 'http://10.251.0.14:8080/ssm/',
+  pathRewrite: {'^/api/v1' : ''},
+}))
+
 // handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')())
 

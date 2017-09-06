@@ -24,7 +24,7 @@ import 'quasar-extras/material-icons'
 import 'quasar-extras/fontawesome'
 // import 'quasar-extras/animate'
 
-Vue.http.options.root = 'http://123.207.142.45:8080/ssm/'
+Vue.http.options.root = '/api/v1/'
 // Vue.http.options.emulateJSON = true
 
 Quasar.start(() => {

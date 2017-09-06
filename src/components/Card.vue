@@ -2,6 +2,8 @@
         <div class="layout-view">
             <div class="profile-page layout-padding">
                 <h1>名片信息</h1>
+                <q-alert color="warning" v-show="!profileData.name">您还没有添加姓名, 请点击左边个人信息添加</q-alert>
+                <q-alert color="info" v-show="profileData.name && (!cards ||cards.length === 0)" class="placeholder">您还没有名片, 请点击右下角生成名片</q-alert>
                 <q-card v-for="card in cards" :key="card.id">
                     <q-card-media>
                         <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
@@ -12,7 +14,6 @@
                         <q-btn color="red" flat @click="delCard(card.id)">删除</q-btn>
                     </q-card-actions>
                 </q-card>
-                <h4 v-show="!cards ||cards.length === 0" class="placeholder">请点击右下角生成名片</h4>
             </div>
             <q-modal ref="basicModal">
                 <div class="cardModal">
@@ -123,6 +124,7 @@ import {
     QCardMedia,
     QCardActions,
     QSpinner,
+    QAlert,
     Loading,
     LocalStorage,
     Toast
@@ -151,6 +153,7 @@ export default {
         QCardMedia,
         QCardActions,
         QSpinner,
+        QAlert,
         LogoPositioner
     },
     data() {
@@ -253,9 +256,17 @@ export default {
                 }).then(resp => {
                     window.location.reload()
                 }, resp => {
-                    Toast.create.negative({
-                        html: '未知错误'
-                    })
+                    switch(resp.status) {
+                    case 404:
+                        Toast.create.negative({
+                            html: resp.data.message
+                        })
+                        break
+                    default:
+                        Toast.create.negative({
+                            html: '未知错误'
+                        })
+                    }
                 })
             }
         },

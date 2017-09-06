@@ -87,11 +87,14 @@ export default {
             }
         }
     },
-    created: function() {
+    beforeRouteEnter(to, from, next) {
         if(!LocalStorage.has('token') || !LocalStorage.has('username')) {
-            this.$router.push('/login')
-            return
+            next('/login')
+        } else {
+            next()
         }
+    },
+    created: function() {
         this.$http.get('user/' + LocalStorage.get.item('username'), {
             headers: {
                 'Access-Token': LocalStorage.get.item('token')

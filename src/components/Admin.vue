@@ -6,7 +6,7 @@
                 <q-card-main>
                     <form>
                         <q-field icon="account_circle">
-                            <q-select :options="userOptions" v-model="formData.username" float-label="选择用户" />
+                            <q-select :options="userOptions" v-model="formData.username" @change="selectUser" float-label="选择用户" />
                         </q-field>
                         <q-field
                             icon="fa-key"
@@ -39,6 +39,18 @@
                     </q-btn>
                 </q-card-actions>
             </q-card>
+            <div class="card-container row">
+                <div class="col-md-12 col-lg-6"  v-for="card in cards" :key="card.id">
+                    <q-card>
+                        <q-card-media>
+                            <img :src="$http.options.root + 'card/' + card.id + '?username=' + formData.username">
+                        </q-card-media>
+                        <q-card-actions>
+                            <q-btn color="red" flat @click="delCard(card.id)">删除</q-btn>
+                        </q-card-actions>
+                    </q-card>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -50,6 +62,7 @@ import {
     QCardSeparator,
     QCardTitle,
     QCardActions,
+    QCardMedia,
     QField,
     QInput,
     QBtn,
@@ -73,6 +86,7 @@ export default {
         QCardSeparator,
         QCardTitle,
         QCardActions,
+        QCardMedia,
         QField,
         QInput,
         QBtn,
@@ -87,7 +101,8 @@ export default {
                 password: '',
                 passwordRepeat: ''
             },
-            users: []
+            users: [],
+            cards: []
         }
     },
     validations: {
@@ -101,6 +116,15 @@ export default {
         }
     },
     methods: {
+        selectUser() {
+            this.$http.get('user/' + this.formData.username, {
+                headers: {
+                    'Access-Token': LocalStorage.get.item('token')
+                }
+            }).then(resp => {
+                this.cards = resp.data.cards
+            })
+        },
         editUser(e, done) {
             if(confirm('确定要修改吗?')) {
                 this.$http.put('user/' + this.formData.username, {
@@ -119,6 +143,32 @@ export default {
                 })
             } else {
                 done()
+            }
+        },
+        delCard(id) {
+            if(confirm('确认要删除吗?')) {
+                this.$http.delete('card/' + id, {
+                    headers: {
+                        'Access-Token': LocalStorage.get.item('token')
+                    }
+                }).then(resp => {
+                    this.cards.splice(
+                        this.cards.findIndex(card => card.id === id),
+                        1
+                    )
+                }, resp => {
+                    switch(resp.status) {
+                    case 404:
+                        Toast.create.negative({
+                            html: resp.data.message
+                        })
+                        break
+                    default:
+                        Toast.create.negative({
+                            html: '未知错误'
+                        })
+                    }
+                })
             }
         }
     },
@@ -175,6 +225,13 @@ hr.card-splitter
     width 100%
 .action-btn
     width 100px
+
+.cardModal
+    padding 30px
+
+
+.placeholder
+    color #ccc
 </style>
 
 <style lang="stylus">

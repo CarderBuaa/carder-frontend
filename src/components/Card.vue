@@ -4,16 +4,21 @@
                 <h1>名片信息</h1>
                 <q-alert color="warning" v-show="!profileData.name">您还没有添加姓名, 请点击左边个人信息添加</q-alert>
                 <q-alert color="info" v-show="profileData.name && (!cards ||cards.length === 0)" class="placeholder">您还没有名片, 请点击右下角生成名片</q-alert>
-                <q-card v-for="card in cards" :key="card.id">
-                    <q-card-media>
-                        <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
-                    </q-card-media>
-                    <q-card-actions>
-                        <!-- <button class="primary" @click="$refs.basicModal.open()">修改</button> -->
-                        <q-btn color="primary" @click="downloadCard(card.id)" v-if="isCordova">下载</q-btn>
-                        <q-btn color="red" flat @click="delCard(card.id)">删除</q-btn>
-                    </q-card-actions>
-                </q-card>
+                <div class="row">
+                    <div class="col-md-12 col-lg-6 card-container"  v-for="card in cards" :key="card.id">
+                        <q-card>
+                            <q-card-media>
+                                <img :src="$http.options.root + 'card/' + card.id + '?username=' + username">
+                            </q-card-media>
+                            <q-card-actions>
+                                <!-- <button class="primary" @click="$refs.basicModal.open()">修改</button> -->
+                                <q-btn color="primary" @click="downloadCard(card.id)" v-if="isCordova">下载</q-btn>
+                                <q-btn color="primary" flat @click="editCard(card)">编辑</q-btn>
+                                <q-btn color="red" flat @click="delCard(card.id)">删除</q-btn>
+                            </q-card-actions>
+                        </q-card>
+                    </div>
+                </div>
             </div>
             <q-modal ref="basicModal">
                 <div class="cardModal">
@@ -88,7 +93,7 @@
                         <logo-positioner @error="removeFile('logoImage', ...arguments)" :image="cardData.logoImage" v-show="cardData.logoImage" v-model="cardData.logoPos"></logo-positioner>
 
                     </form>
-                    <q-btn color="primary" @click="addCardSubmit">
+                    <q-btn color="primary" @click="submitCard">
                         提交
                         <q-spinner slot="loading" />
                     </q-btn>
@@ -200,6 +205,7 @@ export default {
                 faxWork: '单位传真'
             },
             cards: [],
+            currentCardId: null,
             username: '',
             isCordova: false
         }
@@ -235,6 +241,24 @@ export default {
                     this.cardData[index] = false
                 }
             }
+            this.currentCardId = null
+            this.cardData.name = this.profileData.name
+            this.$refs.basicModal.open()
+        },
+        editCard(card) {
+            for(let index in this.cardData) {
+                if(index === 'name') {
+                    this.cardData[index] = this.profileData.name
+                } else if(index === 'logoPos') {
+                    this.cardData[index][0] = card.logoX
+                    this.cardData[index][1] = card.logoY
+                } else if(index === 'image' || index === 'logoImage') {
+                    this.cardData[index] = null
+                } else {
+                    this.cardData[index] = card[index]
+                }
+            }
+            this.currentCardId = card.id
             this.cardData.name = this.profileData.name
             this.$refs.basicModal.open()
         },
@@ -254,7 +278,10 @@ export default {
                         'Access-Token': LocalStorage.get.item('token')
                     }
                 }).then(resp => {
-                    window.location.reload()
+                    this.cards.splice(
+                        this.cards.findIndex(card => card.id === id),
+                        1
+                    )
                 }, resp => {
                     switch(resp.status) {
                     case 404:
@@ -285,7 +312,7 @@ export default {
                 })
             })
         },
-        addCardSubmit(e, done) {
+        submitCard(e, done) {
             let cardData = new FormData()
             for(let key in this.cardData) {
                 if(key !== 'logoPos' && key !== 'name') {
@@ -295,26 +322,35 @@ export default {
             cardData.append('logoX', this.cardData.logoPos[0])
             cardData.append('logoY', this.cardData.logoPos[1])
 
-            this.$http.post('card', cardData, {
+            this.$http({
+                method: 'post',
+                url: this.currentCardId ? 'card/' + this.currentCardId : 'card',
                 headers: {
                     'Access-Token': LocalStorage.get.item('token')
-                }
-            }).then(resp => {
-                window.location.reload()
-            }, resp => {
-                done()
-                switch(resp.status) {
-                case 400:
-                    Toast.create.negative({
-                        html: resp.data.message
-                    })
-                    break
-                default:
-                    Toast.create.negative({
-                        html: '未知错误'
-                    })
-                }
+                },
+                body: cardData
             })
+            // this.$http.post('card', cardData, {
+            //     headers: {
+            //         'Access-Token': LocalStorage.get.item('token')
+            //     }
+            // })
+                .then(resp => {
+                    window.location.reload()
+                }, resp => {
+                    done()
+                    switch(resp.status) {
+                    case 400:
+                        Toast.create.negative({
+                            html: resp.data.message
+                        })
+                        break
+                    default:
+                        Toast.create.negative({
+                            html: '未知错误'
+                        })
+                    }
+                })
         }
     },
     created() {
@@ -364,9 +400,7 @@ export default {
 .fab-card
     margin: 20px
 
-.card-container
-    height: 0
-    padding-bottom calc(60% + 65px)
+
 .placeholder
     color #ccc
 </style>

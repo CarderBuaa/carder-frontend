@@ -29,7 +29,11 @@
                 </q-side-link>
                 <q-side-link v-if="role === 1" item :to="{path: '/admin', exact: true}">
                     <q-item-side icon="settings" />
-                    <q-item-main label="管理" sublabel="管理用户" />
+                    <q-item-main label="管理用户" sublabel="查看修改用户信息" />
+                </q-side-link>
+                <q-side-link v-if="role === 1" item :to="{path: '/manage-card', exact: true}">
+                    <q-item-side icon="settings" />
+                    <q-item-main label="管理卡片" sublabel="查看修改名片信息" />
                 </q-side-link>
             </q-list>
         </div>

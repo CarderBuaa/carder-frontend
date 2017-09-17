@@ -87,6 +87,29 @@
                 </form>
                 
             </q-card>
+            <q-card>
+                <q-card-title>修改密码</q-card-title>
+                <q-card-main>
+                    <q-field
+                        icon="fa-key"
+                        :error="$v.passwordData.password.$error"
+                        :helper="!$v.passwordData.password.required ? '请输入密码' : ''">
+                        <q-input type="password" float-label="新密码" @input="$v.passwordData.password.$touch()" v-model="passwordData.password" />
+                    </q-field>
+                    <q-field
+                        icon="fa-key"
+                        :error="$v.passwordData.passwordRepeat.$error"
+                        :helper="!$v.passwordData.passwordRepeat.required ? '请再次输入密码' : (!$v.passwordData.passwordRepeat.sameAsPassword ? '密码不一致' : '')">
+                        <q-input type="password" float-label="重复密码" @input="$v.passwordData.passwordRepeat.$touch()" v-model="passwordData.passwordRepeat" />
+                    </q-field>
+                </q-card-main>
+                <q-card-actions  align="around">
+                    <q-btn class="action-btn" @click="editPassword" color='primary' :disable="$v.passwordData.passwordRepeat.$invalid">
+                        修改
+                        <q-spinner slot="loading" />
+                    </q-btn>
+                </q-card-actions>
+            </q-card>
         </div>
     </div>
 </template>
@@ -111,7 +134,8 @@ import {
 import {
     required,
     email,
-    numeric
+    numeric,
+    sameAs
 } from 'vuelidate/lib/validators'
 
 export default {
@@ -141,6 +165,10 @@ export default {
                 addressWork: '',
                 faxWork: '',
                 url: ''
+            },
+            passwordData: {
+                password: '',
+                passwordRepeat: ''
             }
         }
     },
@@ -158,6 +186,13 @@ export default {
                 'profileData.email',
                 'profileData.phoneMobile'
             ]
+        },
+        passwordData: {
+            password: { required },
+            passwordRepeat: {
+                required,
+                sameAsPassword: sameAs('password')
+            }
         }
     },
     computed: {
@@ -207,11 +242,31 @@ export default {
                 done()
             }
         },
-        addField: function(field) {
-            this.formdata[field].push(undefined)
-        },
-        delField: function(field, index) {
-            this.formdata[field].splice(index, 1)
+        editPassword(e, done) {
+            if(confirm('确定要修改吗?')) {
+                this.$http.put('user/' + LocalStorage.get.item('username'), {
+                    password: this.passwordData.password
+                }, {
+                    headers: {
+                        'Access-Token': LocalStorage.get.item('token')
+                    }
+                }).then(resp => {
+                    window.location.reload()
+                }, resp => {
+                    done()
+                    switch(resp.status) {
+                    case 400:
+                        Toast.create.negative({
+                            html: resp.data.message
+                        })
+                        break
+                    default:
+                        Toast.create.negative({
+                            html: '未知错误'
+                        })
+                    }
+                })
+            }
         }
     },
     created: function() {
@@ -257,12 +312,4 @@ hr.card-splitter
     width 100%
 .action-btn
     width 100px
-</style>
-
-<style lang="stylus">
-.q-field-helper
-    display none
-.q-field-with-error
-    .q-field-helper
-        display block
 </style>

@@ -74,7 +74,10 @@
                                 ]" />
                         </q-field>
 
-                        <q-field icon="image" label="背景">
+                        <q-field
+                            icon="image"
+                            label="背景"
+                            helper="如果没有上传背景的话会使用默认背景">
                             <div class="q-if row no-wrap items-center relative-position q-input text-primary">
                                 <div class="q-if-inner col row no-wrap items-center relative-position">
                                     <input type="file" accept="image/png,image/gif,image/jpeg" class="col" @change="getFile('image', $event)">

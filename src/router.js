@@ -37,6 +37,10 @@ export default new VueRouter({
                 {
                     path: 'admin',
                     component: load('Admin')
+                },
+                {
+                    path: 'manage-card',
+                    component: load('ManageCard')
                 }
             ]
         }, // Default

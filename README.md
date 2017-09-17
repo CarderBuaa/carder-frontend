@@ -2,18 +2,37 @@
 
 > The frontend for Carder.
 
-## Build Setup
+# 主要依赖
+
+- webpack
+- vue
+- quasar-framework
+
+# 部署说明
 
 ``` bash
-# install dependencies
+# 安裝依赖
 $ npm install
 
-# serve with hot reload at localhost:8080
+# 安裝quasar﹣cli
+$ npm install -g quasar-cli
+
+# 运行dev server
 $ quasar dev
 
-# build for production with minification
+# 编译生成生产环境代码到dist目录
 $ quasar build
 
-# lint code
+# 运行eslint
 $ quasar lint
+```
+
+## 额外说明
+
+在`build/script.dev.js`中配置reverse proxy
+``` javascript
+app.use(proxyMiddleware('/api/v1/', {
+  target: 'api目标地址',
+  pathRewrite: {'^/api/v1' : ''},
+}))
 ```

@@ -9,7 +9,7 @@
                 <q-card-main class="full-width items-center ">
                     <h1>Carder</h1>
                     <div v-show="logining">
-                        <form>
+                        <form @keypress.enter="login">
                             <q-field
                                 icon="account_circle"
                                 :error="$v.loginData.username.$error"
@@ -212,12 +212,13 @@ export default {
     },
     methods: {
         login(e, done) {
-            console.log(done)
             if(!this.loginData.username || !this.loginData.password) {
                 Toast.create.negative({
                     html: '用户名或密码不能为空!'
                 })
-                done()
+                if(done) {
+                    done()
+                }
                 return
             }
             this.working = true
@@ -231,7 +232,9 @@ export default {
                 LocalStorage.set('username', this.loginData.username)
                 this.$router.push('/card')
             }, resp => {
-                done()
+                if(done) {
+                    done()
+                }
                 switch(resp.status) {
                 case 400:
                     Toast.create.negative({
